@@ -82,8 +82,15 @@ h1{margin:0;font-size:18px}
 @media (min-width:980px){ .split{grid-template-columns:1.1fr .9fr} }
 
 #g{
-  width:min(92vw,520px);aspect-ratio:1;display:grid;grid-template-columns:repeat(9,1fr);
-  border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.18);background:var(--cellbg)
+  width:min(92vw,520px);
+  aspect-ratio:1;
+  display:grid;
+  grid-template-columns:repeat(9,1fr);
+  grid-template-rows:repeat(9,1fr);
+  border-radius:16px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.18);
+  background:var(--cellbg);
 }
 :root[data-theme="light"] #g{border-color:rgba(10,20,40,.18)}
 .cell{
@@ -557,17 +564,32 @@ body{ touch-action: pan-y; }
 
   function render(){
     g.innerHTML='';
+    var count=0;
     for(var r=0;r<9;r++)for(var c=0;c<9;c++){
+      count++;
       var x=document.createElement('input');
       x.className='cell';
       x.inputMode='numeric';
       x.maxLength=1;
       if(c===2||c===5) x.classList.add('bR');
       if(r===2||r===5) x.classList.add('bB');
-
       (function(rr,cc,el){
         var v=puz[rr][cc];
         if(v){ el.value=v; el.readOnly=true; el.classList.add('fix'); }
+        el.onfocus=function(){ sel=rr*9+cc; };
+        el.oninput=function(){
+          if(!started){ el.value=''; return; }
+          el.value=(el.value||'').replace(/[^1-9]/g,'').slice(0,1);
+          updateFilled();
+          autoDone();
+        };
+      })(r,c,x);
+      g.appendChild(x);
+    }
+    if(count!==81){ console.error('Grid error: expected 81 cells, got',count); }
+    updateFilled();
+    if(started) unlockBoard(); else lockBoard();
+  }
         el.onfocus=function(){ sel=rr*9+cc; };
         el.oninput=function(){
           if(!started){ el.value=''; return; }
