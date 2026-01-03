@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="he">
+<html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -13,6 +13,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 
 <style>
+/* ===== Theme tokens ===== */
 :root{
   --bg:#0b1020;--line:rgba(255,255,255,.14);--txt:#eaf0ff;--muted:rgba(234,240,255,.70);
   --a:#7c5cff;--b:#37d3ff;--good:#2ee59d;--warn:#ffcc66;
@@ -28,6 +29,7 @@
   --focusbg:rgba(55,211,255,.16);--focusbd:rgba(55,211,255,.45);
   --toastbg:rgba(255,255,255,.78);--shadow:0 14px 50px rgba(15,25,45,.16);
 }
+
 *{box-sizing:border-box}
 body{
   margin:0;min-height:100vh;display:grid;place-items:center;
@@ -38,6 +40,14 @@ body{
     radial-gradient(700px 500px at 60% 90%, rgba(46,229,157,.10), transparent 55%),
     var(--bg);
 }
+
+/* ===== RTL ===== */
+body, input, button, table { direction: rtl; }
+.note, .label, .subhead { text-align: right; }
+.table th, .table td { text-align: right; }
+.table th:first-child, .table td:first-child { text-align: center; }
+.pill { flex-direction: row-reverse; }
+
 .wrap{width:min(1100px,94vw);display:grid;gap:14px}
 .topbar{
   display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
@@ -48,6 +58,7 @@ body{
 h1{margin:0;font-size:18px}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center}
 .pill{padding:6px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted);font-size:12px;display:flex;gap:8px;align-items:center}
+
 .btn{
   border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--txt);
   padding:10px 12px;border-radius:14px;cursor:pointer;transition:.15s;
@@ -60,6 +71,7 @@ h1{margin:0;font-size:18px}
 .btn.primary{border-color:rgba(124,92,255,.55);background:linear-gradient(180deg, rgba(124,92,255,.35), rgba(124,92,255,.18))}
 :root[data-theme="light"] .btn.primary{background:linear-gradient(180deg, rgba(124,92,255,.25), rgba(124,92,255,.12))}
 .btn.ghost{background:transparent}
+
 .card{
   border:1px solid var(--line);border-radius:var(--r);
   background:linear-gradient(180deg, var(--card1), var(--card2));
@@ -68,6 +80,7 @@ h1{margin:0;font-size:18px}
 }
 .split{display:grid;gap:14px;grid-template-columns:1fr;align-items:start}
 @media (min-width:980px){ .split{grid-template-columns:1.1fr .9fr} }
+
 #g{
   width:min(92vw,520px);aspect-ratio:1;display:grid;grid-template-columns:repeat(9,1fr);
   border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.18);background:var(--cellbg)
@@ -77,7 +90,7 @@ h1{margin:0;font-size:18px}
   width:100%;height:100%;border:1px solid rgba(255,255,255,.10);
   text-align:center;font-size:clamp(18px,4vw,28px);color:var(--txt);
   background:transparent;outline:none;caret-color:var(--b);
-  transition:background .12s,border-color .12s,opacity .12s
+  transition:background .12s,border-color .12s,opacity .12s, box-shadow .12s
 }
 :root[data-theme="light"] .cell{border-color:rgba(10,20,40,.10)}
 .cell:focus{background:var(--focusbg);border-color:var(--focusbd)}
@@ -85,11 +98,13 @@ h1{margin:0;font-size:18px}
 .bR{border-right:2px solid rgba(255,255,255,.25)!important}
 .bB{border-bottom:2px solid rgba(255,255,255,.25)!important}
 :root[data-theme="light"] .bR,:root[data-theme="light"] .bB{border-color:rgba(10,20,40,.22)!important}
+
 .note{
   width:min(92vw,520px);display:flex;justify-content:space-between;gap:10px;align-items:center;
   color:var(--muted);font-size:13px
 }
 .kbd{font-variant-numeric:tabular-nums;border:1px solid var(--line);padding:2px 6px;border-radius:8px}
+
 .toast{
   position:fixed;left:50%;bottom:22px;transform:translateX(-50%);
   padding:12px 14px;border-radius:14px;border:1px solid var(--line);
@@ -101,12 +116,13 @@ h1{margin:0;font-size:18px}
 @keyframes pop{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 .dot{width:10px;height:10px;border-radius:50%}
 .dot.good{background:var(--good)} .dot.bad{background:var(--warn)} .dot.info{background:var(--b)}
+
 .table{width:min(92vw,520px);max-width:520px;border:1px solid rgba(255,255,255,.14);border-radius:16px;overflow:hidden;background:rgba(255,255,255,.03)}
 :root[data-theme="light"] .table{background:rgba(0,0,0,.015)}
 .tableTop{padding:12px;background:rgba(255,255,255,.05)}
 :root[data-theme="light"] .tableTop{background:rgba(0,0,0,.03)}
 table{width:100%;border-collapse:collapse;font-size:13px}
-th,td{padding:10px 12px;border-top:1px solid rgba(255,255,255,.10);text-align:left;color:var(--muted)}
+th,td{padding:10px 12px;border-top:1px solid rgba(255,255,255,.10);color:var(--muted)}
 :root[data-theme="light"] th,:root[data-theme="light"] td{border-top-color:rgba(10,20,40,.10)}
 th{color:rgba(234,240,255,.9);font-weight:900}
 :root[data-theme="light"] th{color:rgba(10,20,40,.9)}
@@ -115,29 +131,62 @@ td strong{color:var(--txt)}
 :root[data-theme="light"] .subhead{color:rgba(10,20,40,.9)}
 .sep{height:1px;background:rgba(255,255,255,.10)}
 :root[data-theme="light"] .sep{background:rgba(10,20,40,.10)}
+.medal{ display:inline-flex; align-items:center; gap:6px; font-variant-numeric:tabular-nums; }
+
+/* ===== Modal (popup) ===== */
 .modal{
   position:fixed;inset:0;display:none;place-items:center;padding:18px;
   background:rgba(0,0,0,.55);backdrop-filter:blur(6px);z-index:55
 }
 .modal.show{display:grid}
+.modal.show .panel{ animation: modalIn .22s ease-out; transform-origin: 50% 60%; }
+@keyframes modalIn{
+  from{ opacity:0; transform: translateY(10px) scale(.98); filter: blur(1px); }
+  to{ opacity:1; transform: translateY(0) scale(1); filter: blur(0); }
+}
 .panel{
-  width:min(520px,94vw);border:1px solid var(--line);border-radius:20px;
-  background:linear-gradient(180deg, var(--card1), var(--card2));
-  box-shadow:0 20px 80px rgba(0,0,0,.45);padding:16px;display:grid;gap:12px
+  width:min(520px,94vw);
+  border:1px solid var(--line);
+  border-radius:22px;
+  background:linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.08));
+  box-shadow:0 25px 90px rgba(0,0,0,.55);
+  padding:18px;
+  display:grid;
+  gap:14px
+}
+:root[data-theme="light"] .panel{
+  background:linear-gradient(180deg, rgba(0,0,0,.03), rgba(0,0,0,.015));
+  box-shadow:0 18px 70px rgba(15,25,45,.20);
 }
 .field{display:grid;gap:6px}
 .label{color:var(--muted);font-size:12px}
 .inp{
-  border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--txt);
-  padding:12px 12px;border-radius:14px;outline:none;font-size:14px
+  border:1px solid rgba(255,255,255,.35);
+  background:rgba(255,255,255,.12);
+  color:var(--txt);
+  padding:14px 14px;border-radius:16px;outline:none;font-size:15px
 }
-:root[data-theme="light"] .inp{background:rgba(0,0,0,.03)}
-.choices{display:flex;gap:10px;flex-wrap:wrap}
+:root[data-theme="light"] .inp{
+  border:1px solid rgba(10,20,40,.20);
+  background:rgba(0,0,0,.03);
+}
+.inp::placeholder{ color:rgba(234,240,255,.65); }
+:root[data-theme="light"] .inp::placeholder{ color:rgba(10,20,40,.45); }
+.choices{display:flex;gap:10px;flex-wrap:wrap;flex-direction:row-reverse}
 .choice{flex:1;min-width:120px;justify-content:center}
 .choice.active{border-color:rgba(55,211,255,.55);background:rgba(55,211,255,.10)}
 .panelTop{display:flex;justify-content:space-between;align-items:center;gap:10px}
+
+/* ===== Hint flash (no red) ===== */
+.flash{ animation: flashHint .8s ease-out; }
+@keyframes flashHint{
+  0%{ background: rgba(46,229,157,.18); border-color: rgba(46,229,157,.55); box-shadow: 0 0 0 0 rgba(46,229,157,.0); }
+  35%{ background: rgba(46,229,157,.22); border-color: rgba(46,229,157,.70); box-shadow: 0 0 0 8px rgba(46,229,157,.08); }
+  100%{ background: transparent; border-color: inherit; box-shadow: 0 0 0 0 rgba(46,229,157,0); }
+}
 </style>
 </head>
+
 <body>
 <div class="wrap">
   <div class="topbar">
@@ -197,6 +246,7 @@ td strong{color:var(--txt)}
   </div>
 </div>
 
+<!-- Modal: name -> level -> start -->
 <div class="modal" id="modal">
   <div class="panel">
     <div class="panelTop">
@@ -228,6 +278,7 @@ td strong{color:var(--txt)}
 
 <script>
 (function(){
+  /* ===== Elements ===== */
   var g = document.getElementById('g');
   var stat = document.getElementById('stat');
   var filled = document.getElementById('filled');
@@ -257,6 +308,7 @@ td strong{color:var(--txt)}
   var btnClear= document.getElementById('btnClear');
   var startBtn= document.getElementById('startBtn');
 
+  /* ===== Toast ===== */
   var t = document.getElementById('t'), tm = document.getElementById('tm'), td = document.getElementById('td');
   function toast(msg, type){
     type = type || 'info';
@@ -266,9 +318,11 @@ td strong{color:var(--txt)}
     clearTimeout(toast._); toast._ = setTimeout(function(){ t.classList.remove('show'); }, 2400);
   }
 
-  var THEME_KEY = 'sudoku_theme_mode_pwa1';
+  /* ===== Theme (auto by hour + manual cycle) ===== */
+  var THEME_KEY = 'sudoku_theme_mode_pwa2'; // 'auto'|'light'|'dark'
   var themeMode = 'auto';
   try{ themeMode = localStorage.getItem(THEME_KEY) || 'auto'; }catch(e){ themeMode='auto'; }
+
   function isDay(){ var h=(new Date()).getHours(); return h>=7 && h<19; }
   function applyTheme(){
     var theme = (themeMode==='auto') ? (isDay() ? 'light' : 'dark') : themeMode;
@@ -287,7 +341,8 @@ td strong{color:var(--txt)}
   applyTheme();
   setInterval(function(){ if(themeMode==='auto') applyTheme(); }, 60000);
 
-  var N=9, B=3, LSKEY='sudoku_scores_pwa1';
+  /* ===== Sudoku ===== */
+  var N=9, B=3, LSKEY='sudoku_scores_pwa2';
   var sol=[], puz=[], orig=[];
   var curLevel='easy', started=false, done=false, player='';
   var sel=0;
@@ -300,6 +355,7 @@ td strong{color:var(--txt)}
     var base=[0,1,2];
     var rb=sh(base.slice()), cb=sh(base.slice());
     var r=[], c=[], nums=sh([1,2,3,4,5,6,7,8,9]);
+
     for(var gi=0;gi<3;gi++){
       var g1=rb[gi], inner=sh([0,1,2]);
       for(var k=0;k<3;k++) r.push(g1*3+inner[k]);
@@ -308,6 +364,7 @@ td strong{color:var(--txt)}
       var g2=cb[gj], inner2=sh([0,1,2]);
       for(var kk=0;kk<3;kk++) c.push(g2*3+inner2[kk]);
     }
+
     var out=[];
     for(var i=0;i<9;i++){
       var row=[];
@@ -330,6 +387,7 @@ td strong{color:var(--txt)}
   }
 
   function cells(){ return g.querySelectorAll('input'); }
+
   function lockBoard(){
     var cs=cells();
     for(var i=0;i<cs.length;i++){
@@ -352,13 +410,16 @@ td strong{color:var(--txt)}
     }
     return a;
   }
+
   function updateFilled(){
     var a=readGrid(), k=0;
     for(var r=0;r<9;r++)for(var c=0;c<9;c++) if(a[r][c]) k++;
     filled.textContent = k + '/81';
   }
+
   function levelLabel(l){ return (l==='easy'?'קל':(l==='med'?'בינוני':'קשה')); }
 
+  /* ===== Timer ===== */
   var t0=0, tick=null, elapsed=0;
   function fmt(s){
     s|=0; var m=(s/60)|0, ss=s%60;
@@ -428,6 +489,7 @@ td strong{color:var(--txt)}
     sel=0;
   }
 
+  /* ===== Modal flow ===== */
   function openModal(){
     modal.classList.add('show');
     syncChoiceUI();
@@ -501,6 +563,7 @@ td strong{color:var(--txt)}
     if(mustStart()) return;
     var a=readGrid(), cs=cells();
     var i=sel, r=(i/9)|0, c=i%9;
+
     if(cs[i].readOnly || a[r][c]){
       var empties=[];
       for(var k=0;k<81;k++){
@@ -511,7 +574,11 @@ td strong{color:var(--txt)}
       i = empties[rint(empties.length)];
       sel=i; r=(i/9)|0; c=i%9;
     }
+
     cs[i].value = sol[r][c];
+    cs[i].classList.add('flash');
+    setTimeout(function(){ cs[i].classList.remove('flash'); }, 850);
+
     updateFilled();
     autoDone();
     toast('רמז הוכנס ✅','good');
@@ -532,6 +599,7 @@ td strong{color:var(--txt)}
     openModal();
   }
 
+  /* ===== Leaderboard ===== */
   function esc(s){
     return String(s).replace(/[&<>"']/g,function(m){
       return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]);
@@ -555,7 +623,8 @@ td strong{color:var(--txt)}
       }
       var html='';
       for(var i=0;i<s.length;i++){
-        html += '<tr><td>'+(i+1)+'</td><td><strong>'+esc(s[i].name)+'</strong></td><td>'+fmt(s[i].time)+'</td></tr>';
+        var rk=i+1, medal = rk===1?'🥇':rk===2?'🥈':rk===3?'🥉':'';
+        html += '<tr><td><span class="medal">'+(medal?medal+' ':'')+rk+'</span></td><td><strong>'+esc(s[i].name)+'</strong></td><td>'+fmt(s[i].time)+'</td></tr>';
       }
       tbody.innerHTML=html;
     }
@@ -578,6 +647,7 @@ td strong{color:var(--txt)}
     toast('טבלאות המהירות נוקו 🧹','info');
   }
 
+  /* ===== Button wiring ===== */
   btnEasy.onclick=function(){ newGame('easy'); };
   btnMed.onclick=function(){ newGame('med'); };
   btnHard.onclick=function(){ newGame('hard'); };
@@ -587,10 +657,12 @@ td strong{color:var(--txt)}
   btnReset.onclick=resetBoard;
   btnClear.onclick=clearScores;
 
+  /* ===== Init ===== */
   renderScores();
   pickLevel('easy');
   openModal();
 
+  /* ===== Service Worker register (offline) ===== */
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", function(){
       navigator.serviceWorker.register("./sw.js").catch(function(){});
