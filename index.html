@@ -184,6 +184,32 @@ td strong{color:var(--txt)}
   35%{ background: rgba(46,229,157,.22); border-color: rgba(46,229,157,.70); box-shadow: 0 0 0 8px rgba(46,229,157,.08); }
   100%{ background: transparent; border-color: inherit; box-shadow: 0 0 0 0 rgba(46,229,157,0); }
 }
+
+
+/* ===== Light mode popup contrast fix ===== */
+:root[data-theme="light"] .modal{
+  background: rgba(10,20,40,.28);
+}
+:root[data-theme="light"] .panel{
+  background: rgba(255,255,255,.94);
+  border-color: rgba(10,20,40,.18);
+  box-shadow: 0 22px 90px rgba(15,25,45,.25);
+}
+:root[data-theme="light"] .label{
+  color: rgba(10,20,40,.72);
+}
+:root[data-theme="light"] .inp{
+  background: rgba(255,255,255,.92);
+  border-color: rgba(10,20,40,.22);
+}
+:root[data-theme="light"] .inp::placeholder{
+  color: rgba(10,20,40,.45);
+}
+:root[data-theme="light"] .choice.active{
+  background: rgba(55,211,255,.18);
+  border-color: rgba(55,211,255,.55);
+}
+
 </style>
 </head>
 
