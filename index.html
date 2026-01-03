@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <title>Sudoku</title>
 
 <!-- PWA -->
@@ -186,39 +186,71 @@ td strong{color:var(--txt)}
 }
 
 
-/* ===== Light mode popup contrast fix ===== */
-:root[data-theme="light"] .modal{
-  background: rgba(10,20,40,.28);
+
+
+
+/* ===== Icon styling ===== */
+.ic{ width:18px;height:18px; display:inline-block; color: currentColor; opacity:.92 }
+.btn .ic{ margin-inline-start:0; }
+.btn{ gap:10px; }
+
+/* ===== Medal badges (no emoji) ===== */
+.medal{ display:inline-flex; align-items:center; gap:8px; font-variant-numeric:tabular-nums; }
+.m{ width:10px; height:10px; border-radius:999px; display:inline-block; background: rgba(120,140,170,.55); box-shadow: inset 0 0 0 1px rgba(255,255,255,.25); }
+.m[data-m="gold"]{ background: linear-gradient(180deg, rgba(255,215,110,1), rgba(210,160,40,1)); }
+.m[data-m="silver"]{ background: linear-gradient(180deg, rgba(220,230,245,1), rgba(145,165,195,1)); }
+.m[data-m="bronze"]{ background: linear-gradient(180deg, rgba(235,170,120,1), rgba(165,105,60,1)); }
+
+/* ===== iPhone / small screens centering + safe area ===== */
+body{ min-height: 100svh; padding: calc(env(safe-area-inset-top) + 14px) 12px calc(env(safe-area-inset-bottom) + 18px); }
+.wrap{ margin:auto; }
+.topbar{ width:100%; }
+@media (max-width:520px){
+  .topbar{ padding:14px; }
+  .card{ padding:12px; }
+  .row{ justify-content:center; }
 }
+
+/* ===== Strong Light Mode popup contrast (readability) ===== */
+:root[data-theme="light"] .modal{ background: rgba(10,20,40,.40); }
 :root[data-theme="light"] .panel{
-  background: rgba(255,255,255,.94);
-  border-color: rgba(10,20,40,.18);
-  box-shadow: 0 22px 90px rgba(15,25,45,.25);
-}
-:root[data-theme="light"] .label{
-  color: rgba(10,20,40,.72);
-}
-:root[data-theme="light"] .inp{
-  background: rgba(255,255,255,.92);
+  background: rgba(255,255,255,.98);
   border-color: rgba(10,20,40,.22);
+  box-shadow: 0 28px 110px rgba(15,25,45,.28);
 }
-:root[data-theme="light"] .inp::placeholder{
-  color: rgba(10,20,40,.45);
+:root[data-theme="light"] .panelTop div{ color: rgba(10,20,40,.95); }
+:root[data-theme="light"] .label{ color: rgba(10,20,40,.80); }
+:root[data-theme="light"] .inp{
+  background: rgba(255,255,255,.98);
+  border-color: rgba(10,20,40,.26);
 }
-:root[data-theme="light"] .choice.active{
-  background: rgba(55,211,255,.18);
-  border-color: rgba(55,211,255,.55);
-}
+:root[data-theme="light"] .inp::placeholder{ color: rgba(10,20,40,.55); }
 
 </style>
 </head>
 
 <body>
+
+<svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
+  <symbol id="i-sun" viewBox="0 0 24 24"><path fill="currentColor" d="M12 18a6 6 0 1 1 0-12a6 6 0 0 1 0 12Zm0-16h1v3h-1V2ZM12 19h1v3h-1v-3ZM2 11h3v1H2v-1Zm17 0h3v1h-3v-1ZM4.22 4.22l2.12 2.12-.7.7L3.52 4.92l.7-.7Zm13.94 13.94l2.12 2.12-.7.7-2.12-2.12.7-.7ZM19.78 4.22l.7.7-2.12 2.12-.7-.7 2.12-2.12ZM5.64 17.66l.7.7-2.12 2.12-.7-.7 2.12-2.12Z"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path fill="currentColor" d="M21 14.6A8.5 8.5 0 0 1 9.4 3A7 7 0 1 0 21 14.6Z"/></symbol>
+  <symbol id="i-auto" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 1 0 10 10h-2a8 8 0 1 1-8-8V2Zm1 5h-2v6l5 3l1-1.7-4-2.3V7Z"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path fill="currentColor" d="M13 2L3 14h7l-1 8l12-14h-7l-1-6Z"/></symbol>
+  <symbol id="i-fire" viewBox="0 0 24 24"><path fill="currentColor" d="M13.5 2s1 3-1.5 6c0 0 1 1 1 3s-2 4-2 4 0-2-1-3c-2 2-3 3.5-3 6a6 6 0 0 0 12 0c0-5-3-7-5.5-10Z"/></symbol>
+  <symbol id="i-brain" viewBox="0 0 24 24"><path fill="currentColor" d="M9 3a4 4 0 0 0-4 4v1a3 3 0 0 0 0 6v1a4 4 0 0 0 4 4h1v-2H9a2 2 0 0 1-2-2v-2H6a1 1 0 0 1 0-2h1V9H6a1 1 0 0 1 0-2h1V7a2 2 0 0 1 2-2h1V3H9Zm6 0h-1v2h1a2 2 0 0 1 2 2v1h1a1 1 0 0 1 0 2h-1v2h1a1 1 0 0 1 0 2h-1v2a2 2 0 0 1-2 2h-1v2h1a4 4 0 0 0 4-4v-1a3 3 0 0 0 0-6V7a4 4 0 0 0-4-4Z"/></symbol>
+  <symbol id="i-hint" viewBox="0 0 24 24"><path fill="currentColor" d="M9 21h6v-1H9v1Zm3-20a7 7 0 0 0-4 12.7V17h8v-3.3A7 7 0 0 0 12 1Zm3 11.6l-1 1V15h-4v-1.4l-1-1A5 5 0 1 1 15 12.6Z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path fill="currentColor" d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2Z"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path fill="currentColor" d="M17.65 6.35A7.95 7.95 0 0 0 12 4V1L7 6l5 5V6a6 6 0 1 1-6 6H4a8 8 0 1 0 13.65-5.65Z"/></symbol>
+  <symbol id="i-reset" viewBox="0 0 24 24"><path fill="currentColor" d="M12 5V2L7 7l5 5V9a5 5 0 1 1-5 5H5a7 7 0 1 0 7-9Z"/></symbol>
+  <symbol id="i-broom" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3l2 2-6 6-2-2 6-6ZM3 21l7-7 2 2-7 7H3Zm9.5-8.5L5 20h5l5-5-2.5-2.5Z"/></symbol>
+</svg>
+
+
 <div class="wrap">
   <div class="topbar">
     <h1>Sudoku</h1>
     <div class="row">
-      <button class="btn ghost" id="themeBtn">🌓 מצב</button>
+      <button class="btn ghost" id="themeBtn"><svg class="ic" viewBox="0 0 24 24"><use href="#i-auto"></use></svg><span>מצב</span></button>
       <div class="pill" id="stat">רמה: קל</div>
       <div class="pill"><span>⏱️</span><span id="timer">00:00</span></div>
     </div>
@@ -227,13 +259,13 @@ td strong{color:var(--txt)}
   <div class="split">
     <div class="card">
       <div class="row">
-        <button class="btn primary" id="btnEasy">⚡ קל</button>
-        <button class="btn primary" id="btnMed">🔥 בינוני</button>
-        <button class="btn primary" id="btnHard">🧠 קשה</button>
-        <button class="btn" id="btnHint">💡 רמז</button>
-        <button class="btn" id="btnCheck">✅ בדיקה</button>
-        <button class="btn ghost" id="btnNew">🔄 לוח חדש</button>
-        <button class="btn ghost" id="btnReset">↩️ איפוס</button>
+        <button class="btn primary" id="btnEasy"><svg class="ic" viewBox="0 0 24 24"><use href="#i-bolt"></use></svg><span>קל</span></button>
+        <button class="btn primary" id="btnMed"><svg class="ic" viewBox="0 0 24 24"><use href="#i-fire"></use></svg><span>בינוני</span></button>
+        <button class="btn primary" id="btnHard"><svg class="ic" viewBox="0 0 24 24"><use href="#i-brain"></use></svg><span>קשה</span></button>
+        <button class="btn" id="btnHint"><svg class="ic" viewBox="0 0 24 24"><use href="#i-hint"></use></svg><span>רמז</span></button>
+        <button class="btn" id="btnCheck"><svg class="ic" viewBox="0 0 24 24"><use href="#i-check"></use></svg><span>בדיקה</span></button>
+        <button class="btn ghost" id="btnNew"><svg class="ic" viewBox="0 0 24 24"><use href="#i-refresh"></use></svg><span>לוח חדש</span></button>
+        <button class="btn ghost" id="btnReset"><svg class="ic" viewBox="0 0 24 24"><use href="#i-reset"></use></svg><span>איפוס</span></button>
       </div>
 
       <div>
@@ -253,7 +285,7 @@ td strong{color:var(--txt)}
               <div style="font-weight:900;color:var(--txt)">טבלת מהירות לפי רמה (Top 10)</div>
               <div style="font-size:12px;color:var(--muted)">נשמר מקומית בדפדפן</div>
             </div>
-            <button class="btn ghost" id="btnClear">🧹 נקה</button>
+            <button class="btn ghost" id="btnClear"><svg class="ic" viewBox="0 0 24 24"><use href="#i-broom"></use></svg><span>נקה</span></button>
           </div>
         </div>
 
@@ -277,7 +309,7 @@ td strong{color:var(--txt)}
   <div class="panel">
     <div class="panelTop">
       <div style="font-weight:900">התחלת משחק</div>
-      <button class="btn ghost" id="themeBtn2">🌓 מצב</button>
+      <button class="btn ghost" id="themeBtn2"><svg class="ic" viewBox="0 0 24 24"><use href="#i-auto"></use></svg><span>מצב</span></button>
     </div>
 
     <div class="field">
@@ -288,14 +320,14 @@ td strong{color:var(--txt)}
     <div class="field">
       <div class="label">רמה</div>
       <div class="choices">
-        <button class="btn choice" id="c_easy">⚡ קל</button>
-        <button class="btn choice" id="c_med">🔥 בינוני</button>
-        <button class="btn choice" id="c_hard">🧠 קשה</button>
+        <button class="btn choice" id="c_easy"><svg class="ic" viewBox="0 0 24 24"><use href="#i-bolt"></use></svg><span>קל</span></button>
+        <button class="btn choice" id="c_med"><svg class="ic" viewBox="0 0 24 24"><use href="#i-fire"></use></svg><span>בינוני</span></button>
+        <button class="btn choice" id="c_hard"><svg class="ic" viewBox="0 0 24 24"><use href="#i-brain"></use></svg><span>קשה</span></button>
       </div>
     </div>
 
     <div class="row" style="justify-content:flex-end">
-      <button class="btn primary" id="startBtn">▶️ התחל</button>
+      <button class="btn primary" id="startBtn"><span>התחל</span></button>
     </div>
   </div>
 </div>
@@ -353,7 +385,7 @@ td strong{color:var(--txt)}
   function applyTheme(){
     var theme = (themeMode==='auto') ? (isDay() ? 'light' : 'dark') : themeMode;
     document.documentElement.setAttribute('data-theme', theme);
-    var label = (themeMode==='auto') ? '🌓 מצב (אוטו)' : (themeMode==='light' ? '☀️ מצב (בהיר)' : '🌙 מצב (ערב)');
+    var label = (themeMode==='auto') ? 'מצב: אוטומטי' : (themeMode==='light' ? 'מצב: בהיר' : 'מצב: ערב');
     themeBtn.textContent = label;
     themeBtn2.textContent = label;
   }
@@ -649,8 +681,8 @@ td strong{color:var(--txt)}
       }
       var html='';
       for(var i=0;i<s.length;i++){
-        var rk=i+1, medal = rk===1?'🥇':rk===2?'🥈':rk===3?'🥉':'';
-        html += '<tr><td><span class="medal">'+(medal?medal+' ':'')+rk+'</span></td><td><strong>'+esc(s[i].name)+'</strong></td><td>'+fmt(s[i].time)+'</td></tr>';
+        var rk=i+1, medal = rk===1?'gold':rk===2?'silver':rk===3?'bronze':'';
+        html += \'<tr><td><span class="medal"><span class="m" data-m="\'+medal+\'"></span>\'+rk+\'</span></td><td><strong>\'+esc(s[i].name)+\'</strong></td><td>\'+fmt(s[i].time)+\'</td></tr>\';
       }
       tbody.innerHTML=html;
     }
