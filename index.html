@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="he">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Sudoku</title>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0b1020">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="icon-192.png">
+
+<style>
+:root{
+  --bg:#0b1020;--line:rgba(255,255,255,.14);--txt:#eaf0ff;--muted:rgba(234,240,255,.70);
+  --a:#7c5cff;--b:#37d3ff;--good:#2ee59d;--warn:#ffcc66;
+  --card1:rgba(255,255,255,.08);--card2:rgba(255,255,255,.04);
+  --cellbg:rgba(255,255,255,.04);--fixbg:rgba(255,255,255,.06);
+  --focusbg:rgba(55,211,255,.10);--focusbd:rgba(55,211,255,.30);
+  --toastbg:rgba(10,14,28,.65);--r:18px;--shadow:0 14px 50px rgba(0,0,0,.35);
+}
+:root[data-theme="light"]{
+  --bg:#f6f7fb;--line:rgba(10,20,40,.14);--txt:#0b1020;--muted:rgba(10,20,40,.65);
+  --card1:rgba(0,0,0,.03);--card2:rgba(0,0,0,.015);
+  --cellbg:rgba(0,0,0,.02);--fixbg:rgba(0,0,0,.035);
+  --focusbg:rgba(55,211,255,.16);--focusbd:rgba(55,211,255,.45);
+  --toastbg:rgba(255,255,255,.78);--shadow:0 14px 50px rgba(15,25,45,.16);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;min-height:100vh;display:grid;place-items:center;
+  font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial;color:var(--txt);
+  background:
+    radial-gradient(900px 600px at 20% 10%, rgba(124,92,255,.28), transparent 60%),
+    radial-gradient(900px 600px at 80% 20%, rgba(55,211,255,.20), transparent 55%),
+    radial-gradient(700px 500px at 60% 90%, rgba(46,229,157,.10), transparent 55%),
+    var(--bg);
+}
+.wrap{width:min(1100px,94vw);display:grid;gap:14px}
+.topbar{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:16px;border:1px solid var(--line);border-radius:var(--r);
+  background:linear-gradient(180deg, var(--card1), var(--card2));
+  box-shadow:var(--shadow);backdrop-filter:blur(10px);
+}
+h1{margin:0;font-size:18px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center}
+.pill{padding:6px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted);font-size:12px;display:flex;gap:8px;align-items:center}
+.btn{
+  border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--txt);
+  padding:10px 12px;border-radius:14px;cursor:pointer;transition:.15s;
+  display:flex;gap:8px;align-items:center;font-weight:800;user-select:none
+}
+:root[data-theme="light"] .btn{background:rgba(0,0,0,.03)}
+.btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.08)}
+:root[data-theme="light"] .btn:hover{background:rgba(0,0,0,.05)}
+.btn:active{transform:translateY(0)}
+.btn.primary{border-color:rgba(124,92,255,.55);background:linear-gradient(180deg, rgba(124,92,255,.35), rgba(124,92,255,.18))}
+:root[data-theme="light"] .btn.primary{background:linear-gradient(180deg, rgba(124,92,255,.25), rgba(124,92,255,.12))}
+.btn.ghost{background:transparent}
+.card{
+  border:1px solid var(--line);border-radius:var(--r);
+  background:linear-gradient(180deg, var(--card1), var(--card2));
+  box-shadow:var(--shadow);backdrop-filter:blur(10px);
+  padding:14px;display:grid;gap:12px;justify-items:center
+}
+.split{display:grid;gap:14px;grid-template-columns:1fr;align-items:start}
+@media (min-width:980px){ .split{grid-template-columns:1.1fr .9fr} }
+#g{
+  width:min(92vw,520px);aspect-ratio:1;display:grid;grid-template-columns:repeat(9,1fr);
+  border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.18);background:var(--cellbg)
+}
+:root[data-theme="light"] #g{border-color:rgba(10,20,40,.18)}
+.cell{
+  width:100%;height:100%;border:1px solid rgba(255,255,255,.10);
+  text-align:center;font-size:clamp(18px,4vw,28px);color:var(--txt);
+  background:transparent;outline:none;caret-color:var(--b);
+  transition:background .12s,border-color .12s,opacity .12s
+}
+:root[data-theme="light"] .cell{border-color:rgba(10,20,40,.10)}
+.cell:focus{background:var(--focusbg);border-color:var(--focusbd)}
+.fix{background:var(--fixbg);font-weight:900}
+.bR{border-right:2px solid rgba(255,255,255,.25)!important}
+.bB{border-bottom:2px solid rgba(255,255,255,.25)!important}
+:root[data-theme="light"] .bR,:root[data-theme="light"] .bB{border-color:rgba(10,20,40,.22)!important}
+.note{
+  width:min(92vw,520px);display:flex;justify-content:space-between;gap:10px;align-items:center;
+  color:var(--muted);font-size:13px
+}
+.kbd{font-variant-numeric:tabular-nums;border:1px solid var(--line);padding:2px 6px;border-radius:8px}
+.toast{
+  position:fixed;left:50%;bottom:22px;transform:translateX(-50%);
+  padding:12px 14px;border-radius:14px;border:1px solid var(--line);
+  background:var(--toastbg);backdrop-filter:blur(10px);
+  box-shadow:0 18px 60px rgba(0,0,0,.35);
+  display:none;gap:10px;align-items:center;max-width:min(680px,92vw);z-index:60
+}
+.toast.show{display:flex;animation:pop .18s ease-out}
+@keyframes pop{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.dot{width:10px;height:10px;border-radius:50%}
+.dot.good{background:var(--good)} .dot.bad{background:var(--warn)} .dot.info{background:var(--b)}
+.table{width:min(92vw,520px);max-width:520px;border:1px solid rgba(255,255,255,.14);border-radius:16px;overflow:hidden;background:rgba(255,255,255,.03)}
+:root[data-theme="light"] .table{background:rgba(0,0,0,.015)}
+.tableTop{padding:12px;background:rgba(255,255,255,.05)}
+:root[data-theme="light"] .tableTop{background:rgba(0,0,0,.03)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:10px 12px;border-top:1px solid rgba(255,255,255,.10);text-align:left;color:var(--muted)}
+:root[data-theme="light"] th,:root[data-theme="light"] td{border-top-color:rgba(10,20,40,.10)}
+th{color:rgba(234,240,255,.9);font-weight:900}
+:root[data-theme="light"] th{color:rgba(10,20,40,.9)}
+td strong{color:var(--txt)}
+.subhead{padding:10px 12px;font-weight:900;color:rgba(234,240,255,.9)}
+:root[data-theme="light"] .subhead{color:rgba(10,20,40,.9)}
+.sep{height:1px;background:rgba(255,255,255,.10)}
+:root[data-theme="light"] .sep{background:rgba(10,20,40,.10)}
+.modal{
+  position:fixed;inset:0;display:none;place-items:center;padding:18px;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(6px);z-index:55
+}
+.modal.show{display:grid}
+.panel{
+  width:min(520px,94vw);border:1px solid var(--line);border-radius:20px;
+  background:linear-gradient(180deg, var(--card1), var(--card2));
+  box-shadow:0 20px 80px rgba(0,0,0,.45);padding:16px;display:grid;gap:12px
+}
+.field{display:grid;gap:6px}
+.label{color:var(--muted);font-size:12px}
+.inp{
+  border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--txt);
+  padding:12px 12px;border-radius:14px;outline:none;font-size:14px
+}
+:root[data-theme="light"] .inp{background:rgba(0,0,0,.03)}
+.choices{display:flex;gap:10px;flex-wrap:wrap}
+.choice{flex:1;min-width:120px;justify-content:center}
+.choice.active{border-color:rgba(55,211,255,.55);background:rgba(55,211,255,.10)}
+.panelTop{display:flex;justify-content:space-between;align-items:center;gap:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <h1>Sudoku</h1>
+    <div class="row">
+      <button class="btn ghost" id="themeBtn">🌓 מצב</button>
+      <div class="pill" id="stat">רמה: קל</div>
+      <div class="pill"><span>⏱️</span><span id="timer">00:00</span></div>
+    </div>
+  </div>
+
+  <div class="split">
+    <div class="card">
+      <div class="row">
+        <button class="btn primary" id="btnEasy">⚡ קל</button>
+        <button class="btn primary" id="btnMed">🔥 בינוני</button>
+        <button class="btn primary" id="btnHard">🧠 קשה</button>
+        <button class="btn" id="btnHint">💡 רמז</button>
+        <button class="btn" id="btnCheck">✅ בדיקה</button>
+        <button class="btn ghost" id="btnNew">🔄 לוח חדש</button>
+        <button class="btn ghost" id="btnReset">↩️ איפוס</button>
+      </div>
+
+      <div>
+        <div id="g" aria-label="Sudoku grid"></div>
+        <div class="note">
+          <span>טיפ: ניווט עם חצים, מחיקה עם <span class="kbd">Backspace</span>.</span>
+          <span id="filled">0/81</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="table">
+        <div class="tableTop">
+          <div class="row" style="width:100%;justify-content:space-between">
+            <div style="display:grid;gap:2px">
+              <div style="font-weight:900;color:var(--txt)">טבלת מהירות לפי רמה (Top 10)</div>
+              <div style="font-size:12px;color:var(--muted)">נשמר מקומית בדפדפן</div>
+            </div>
+            <button class="btn ghost" id="btnClear">🧹 נקה</button>
+          </div>
+        </div>
+
+        <div style="padding:0 0 10px 0">
+          <div class="subhead">קל</div>
+          <table><thead><tr><th>#</th><th>שם</th><th>זמן</th></tr></thead><tbody id="scores_easy"></tbody></table>
+          <div class="sep"></div>
+          <div class="subhead">בינוני</div>
+          <table><thead><tr><th>#</th><th>שם</th><th>זמן</th></tr></thead><tbody id="scores_med"></tbody></table>
+          <div class="sep"></div>
+          <div class="subhead">קשה</div>
+          <table><thead><tr><th>#</th><th>שם</th><th>זמן</th></tr></thead><tbody id="scores_hard"></tbody></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="panel">
+    <div class="panelTop">
+      <div style="font-weight:900">התחלת משחק</div>
+      <button class="btn ghost" id="themeBtn2">🌓 מצב</button>
+    </div>
+
+    <div class="field">
+      <div class="label">שם</div>
+      <input id="name" class="inp" placeholder="הכנס שם" maxlength="18" />
+    </div>
+
+    <div class="field">
+      <div class="label">רמה</div>
+      <div class="choices">
+        <button class="btn choice" id="c_easy">⚡ קל</button>
+        <button class="btn choice" id="c_med">🔥 בינוני</button>
+        <button class="btn choice" id="c_hard">🧠 קשה</button>
+      </div>
+    </div>
+
+    <div class="row" style="justify-content:flex-end">
+      <button class="btn primary" id="startBtn">▶️ התחל</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="t"><span class="dot info" id="td"></span><div id="tm"></div></div>
+
+<script>
+(function(){
+  var g = document.getElementById('g');
+  var stat = document.getElementById('stat');
+  var filled = document.getElementById('filled');
+  var timerEl = document.getElementById('timer');
+
+  var modal = document.getElementById('modal');
+  var nameEl = document.getElementById('name');
+
+  var themeBtn = document.getElementById('themeBtn');
+  var themeBtn2 = document.getElementById('themeBtn2');
+
+  var c_easy = document.getElementById('c_easy');
+  var c_med  = document.getElementById('c_med');
+  var c_hard = document.getElementById('c_hard');
+
+  var scores_easy = document.getElementById('scores_easy');
+  var scores_med  = document.getElementById('scores_med');
+  var scores_hard = document.getElementById('scores_hard');
+
+  var btnEasy = document.getElementById('btnEasy');
+  var btnMed  = document.getElementById('btnMed');
+  var btnHard = document.getElementById('btnHard');
+  var btnHint = document.getElementById('btnHint');
+  var btnCheck= document.getElementById('btnCheck');
+  var btnNew  = document.getElementById('btnNew');
+  var btnReset= document.getElementById('btnReset');
+  var btnClear= document.getElementById('btnClear');
+  var startBtn= document.getElementById('startBtn');
+
+  var t = document.getElementById('t'), tm = document.getElementById('tm'), td = document.getElementById('td');
+  function toast(msg, type){
+    type = type || 'info';
+    tm.textContent = msg;
+    td.className = 'dot ' + (type==='good'?'good':type==='bad'?'bad':'info');
+    t.classList.remove('show'); void t.offsetWidth; t.classList.add('show');
+    clearTimeout(toast._); toast._ = setTimeout(function(){ t.classList.remove('show'); }, 2400);
+  }
+
+  var THEME_KEY = 'sudoku_theme_mode_pwa1';
+  var themeMode = 'auto';
+  try{ themeMode = localStorage.getItem(THEME_KEY) || 'auto'; }catch(e){ themeMode='auto'; }
+  function isDay(){ var h=(new Date()).getHours(); return h>=7 && h<19; }
+  function applyTheme(){
+    var theme = (themeMode==='auto') ? (isDay() ? 'light' : 'dark') : themeMode;
+    document.documentElement.setAttribute('data-theme', theme);
+    var label = (themeMode==='auto') ? '🌓 מצב (אוטו)' : (themeMode==='light' ? '☀️ מצב (בהיר)' : '🌙 מצב (ערב)');
+    themeBtn.textContent = label;
+    themeBtn2.textContent = label;
+  }
+  function toggleTheme(){
+    themeMode = (themeMode==='auto') ? 'light' : (themeMode==='light' ? 'dark' : 'auto');
+    try{ localStorage.setItem(THEME_KEY, themeMode); }catch(e){}
+    applyTheme();
+  }
+  themeBtn.onclick = toggleTheme;
+  themeBtn2.onclick = toggleTheme;
+  applyTheme();
+  setInterval(function(){ if(themeMode==='auto') applyTheme(); }, 60000);
+
+  var N=9, B=3, LSKEY='sudoku_scores_pwa1';
+  var sol=[], puz=[], orig=[];
+  var curLevel='easy', started=false, done=false, player='';
+  var sel=0;
+
+  function rint(n){ return (Math.random()*n)|0; }
+  function sh(a){ for(var i=a.length-1;i>0;i--){ var j=rint(i+1), t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+  function pat(r,c){ return (B*(r%B)+((r/B)|0)+c)%N; }
+
+  function makeFull(){
+    var base=[0,1,2];
+    var rb=sh(base.slice()), cb=sh(base.slice());
+    var r=[], c=[], nums=sh([1,2,3,4,5,6,7,8,9]);
+    for(var gi=0;gi<3;gi++){
+      var g1=rb[gi], inner=sh([0,1,2]);
+      for(var k=0;k<3;k++) r.push(g1*3+inner[k]);
+    }
+    for(var gj=0;gj<3;gj++){
+      var g2=cb[gj], inner2=sh([0,1,2]);
+      for(var kk=0;kk<3;kk++) c.push(g2*3+inner2[kk]);
+    }
+    var out=[];
+    for(var i=0;i<9;i++){
+      var row=[];
+      for(var j=0;j<9;j++) row.push(nums[pat(r[i],c[j])]);
+      out.push(row);
+    }
+    return out;
+  }
+
+  function dig(full, holes){
+    var p=[], i;
+    for(i=0;i<9;i++){ p[i]=full[i].slice(); }
+    var ids=[]; for(i=0;i<81;i++) ids.push(i);
+    sh(ids);
+    for(i=0;i<ids.length && holes>0;i++){
+      var id=ids[i], rr=(id/9)|0, cc=id%9;
+      if(p[rr][cc]){ p[rr][cc]=0; holes--; }
+    }
+    return p;
+  }
+
+  function cells(){ return g.querySelectorAll('input'); }
+  function lockBoard(){
+    var cs=cells();
+    for(var i=0;i<cs.length;i++){
+      var x=cs[i];
+      if(!x.readOnly){ x.disabled=true; x.style.opacity=.6; }
+    }
+  }
+  function unlockBoard(){
+    var cs=cells();
+    for(var i=0;i<cs.length;i++){
+      cs[i].disabled=false; cs[i].style.opacity=1;
+    }
+  }
+
+  function readGrid(){
+    var cs=cells(), a=[[],[],[],[],[],[],[],[],[]];
+    for(var i=0;i<81;i++){
+      var rr=(i/9)|0, cc=i%9;
+      a[rr][cc] = +(cs[i].value||0);
+    }
+    return a;
+  }
+  function updateFilled(){
+    var a=readGrid(), k=0;
+    for(var r=0;r<9;r++)for(var c=0;c<9;c++) if(a[r][c]) k++;
+    filled.textContent = k + '/81';
+  }
+  function levelLabel(l){ return (l==='easy'?'קל':(l==='med'?'בינוני':'קשה')); }
+
+  var t0=0, tick=null, elapsed=0;
+  function fmt(s){
+    s|=0; var m=(s/60)|0, ss=s%60;
+    return String(m).padStart(2,'0') + ':' + String(ss).padStart(2,'0');
+  }
+  function stopTimer(){ if(tick){ clearInterval(tick); tick=null; } }
+  function resetTimerUI(){ stopTimer(); elapsed=0; timerEl.textContent='00:00'; }
+  function startTimer(){
+    resetTimerUI();
+    t0 = Date.now(); done=false;
+    tick = setInterval(function(){
+      if(done) return;
+      elapsed = ((Date.now()-t0)/1000)|0;
+      timerEl.textContent = fmt(elapsed);
+    }, 250);
+  }
+
+  function render(){
+    g.innerHTML='';
+    for(var r=0;r<9;r++)for(var c=0;c<9;c++){
+      var x=document.createElement('input');
+      x.className='cell';
+      x.inputMode='numeric';
+      x.maxLength=1;
+      if(c===2||c===5) x.classList.add('bR');
+      if(r===2||r===5) x.classList.add('bB');
+
+      (function(rr,cc,el){
+        var v=puz[rr][cc];
+        if(v){ el.value=v; el.readOnly=true; el.classList.add('fix'); }
+        el.onfocus=function(){ sel=rr*9+cc; };
+        el.oninput=function(){
+          if(!started){ el.value=''; return; }
+          el.value = (el.value||'').replace(/[^1-9]/g,'').slice(0,1);
+          updateFilled();
+          autoDone();
+        };
+        el.onkeydown=function(e){
+          var i=sel, r0=(i/9)|0, c0=i%9;
+          function go(j){
+            sel=j;
+            var cs=cells();
+            if(cs[j]) cs[j].focus();
+          }
+          if(e.key==='ArrowLeft')  go(r0*9+Math.max(0,c0-1));
+          if(e.key==='ArrowRight') go(r0*9+Math.min(8,c0+1));
+          if(e.key==='ArrowUp')    go(Math.max(0,r0-1)*9+c0);
+          if(e.key==='ArrowDown')  go(Math.min(8,r0+1)*9+c0);
+        };
+      })(r,c,x);
+
+      g.appendChild(x);
+    }
+    updateFilled();
+    if(started) unlockBoard(); else lockBoard();
+  }
+
+  function makeBoard(level){
+    curLevel = level;
+    sol = makeFull();
+    var holes = (level==='easy'?40:(level==='med'?50:60));
+    puz = dig(sol, holes);
+    orig = puz.map(function(row){ return row.slice(); });
+    started=false; done=false; resetTimerUI();
+    stat.textContent = 'רמה: ' + levelLabel(level);
+    render();
+    sel=0;
+  }
+
+  function openModal(){
+    modal.classList.add('show');
+    syncChoiceUI();
+    setTimeout(function(){ try{nameEl.focus();}catch(e){} }, 50);
+  }
+  function closeModal(){ modal.classList.remove('show'); }
+  function syncChoiceUI(){
+    c_easy.classList.toggle('active', curLevel==='easy');
+    c_med.classList.toggle('active',  curLevel==='med');
+    c_hard.classList.toggle('active', curLevel==='hard');
+  }
+  function pickLevel(l){
+    curLevel=l;
+    stat.textContent='רמה: '+levelLabel(l);
+    syncChoiceUI();
+  }
+  c_easy.onclick=function(){ pickLevel('easy'); };
+  c_med.onclick=function(){ pickLevel('med'); };
+  c_hard.onclick=function(){ pickLevel('hard'); };
+
+  startBtn.onclick=function(){
+    var n=(nameEl.value||'').trim();
+    if(!n){ toast('נא להזין שם','bad'); return; }
+    player = n.slice(0,18);
+    closeModal();
+    makeBoard(curLevel);
+    started=true;
+    unlockBoard();
+    startTimer();
+    toast('בהצלחה! ⏱️','info');
+    var cs=cells();
+    for(var i=0;i<cs.length;i++){ if(!cs[i].readOnly){ cs[i].focus(); break; } }
+  };
+
+  function mustStart(){
+    if(started) return false;
+    openModal();
+    toast('כדי להתחיל: שם → רמה → ▶️ התחל','bad');
+    return true;
+  }
+
+  function check(){
+    if(mustStart()) return false;
+    var a=readGrid(), filledAll=true, ok=true;
+    for(var r=0;r<9;r++)for(var c=0;c<9;c++){
+      if(!a[r][c]) filledAll=false;
+      if(a[r][c] && a[r][c]!==sol[r][c]) ok=false;
+    }
+    if(!filledAll) toast('עוד לא סיימת — יש תאים ריקים.','bad');
+    else toast(ok?'כל הכבוד! פתרון נכון ✅':'יש טעויות בלוח ❗ בדוק שוב.','bad');
+    return filledAll && ok;
+  }
+
+  function autoDone(){
+    var a=readGrid();
+    for(var r=0;r<9;r++)for(var c=0;c<9;c++) if(!a[r][c]) return;
+    var ok=true;
+    for(var rr=0;rr<9;rr++)for(var cc=0;cc<9;cc++){
+      if(a[rr][cc]!==sol[rr][cc]){ ok=false; break; }
+    }
+    if(ok){
+      done=true; stopTimer();
+      toast('כל הכבוד! פתרון נכון ✅ נשמר בטבלה','good');
+      saveScore();
+    }else{
+      toast('סיימת אבל יש טעויות ❗','bad');
+    }
+  }
+
+  function hint(){
+    if(mustStart()) return;
+    var a=readGrid(), cs=cells();
+    var i=sel, r=(i/9)|0, c=i%9;
+    if(cs[i].readOnly || a[r][c]){
+      var empties=[];
+      for(var k=0;k<81;k++){
+        var rr=(k/9)|0, cc=k%9;
+        if(!a[rr][cc] && !cs[k].readOnly) empties.push(k);
+      }
+      if(!empties.length){ toast('אין איפה לשים רמז.','bad'); return; }
+      i = empties[rint(empties.length)];
+      sel=i; r=(i/9)|0; c=i%9;
+    }
+    cs[i].value = sol[r][c];
+    updateFilled();
+    autoDone();
+    toast('רמז הוכנס ✅','good');
+  }
+
+  function newGame(level){
+    curLevel = level;
+    pickLevel(level);
+    openModal();
+  }
+
+  function resetBoard(){
+    started=false; done=false; resetTimerUI();
+    if(orig && orig.length){
+      puz = orig.map(function(row){ return row.slice(); });
+      render();
+    }
+    openModal();
+  }
+
+  function esc(s){
+    return String(s).replace(/[&<>"']/g,function(m){
+      return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]);
+    });
+  }
+  function loadScores(){
+    try{ return JSON.parse(localStorage.getItem(LSKEY)||'[]')||[]; }catch(e){ return []; }
+  }
+  function writeScores(a){
+    try{ localStorage.setItem(LSKEY, JSON.stringify(a)); }catch(e){}
+  }
+  function renderScores(){
+    var all=loadScores();
+    function renderInto(level, tbody){
+      var s=all.filter(function(x){return x.level===level;})
+               .sort(function(a,b){ return (a.time-b.time) || (b.ts-a.ts); })
+               .slice(0,10);
+      if(!s.length){
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:rgba(234,240,255,.6)">אין עדיין תוצאות</td></tr>';
+        return;
+      }
+      var html='';
+      for(var i=0;i<s.length;i++){
+        html += '<tr><td>'+(i+1)+'</td><td><strong>'+esc(s[i].name)+'</strong></td><td>'+fmt(s[i].time)+'</td></tr>';
+      }
+      tbody.innerHTML=html;
+    }
+    renderInto('easy', scores_easy);
+    renderInto('med',  scores_med);
+    renderInto('hard', scores_hard);
+  }
+  function saveScore(){
+    var entry={name:player||'אורח', level:curLevel, time:elapsed, ts:Date.now()};
+    var s=loadScores();
+    s.push(entry);
+    s.sort(function(a,b){ return (a.time-b.time) || (b.ts-a.ts); });
+    if(s.length>300) s=s.slice(0,300);
+    writeScores(s);
+    renderScores();
+  }
+  function clearScores(){
+    try{ localStorage.removeItem(LSKEY); }catch(e){}
+    renderScores();
+    toast('טבלאות המהירות נוקו 🧹','info');
+  }
+
+  btnEasy.onclick=function(){ newGame('easy'); };
+  btnMed.onclick=function(){ newGame('med'); };
+  btnHard.onclick=function(){ newGame('hard'); };
+  btnHint.onclick=hint;
+  btnCheck.onclick=check;
+  btnNew.onclick=function(){ newGame(curLevel); };
+  btnReset.onclick=resetBoard;
+  btnClear.onclick=clearScores;
+
+  renderScores();
+  pickLevel('easy');
+  openModal();
+
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function(){
+      navigator.serviceWorker.register("./sw.js").catch(function(){});
+    });
+  }
+})();
+</script>
+</body>
+</html>
