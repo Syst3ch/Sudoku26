@@ -1,5 +1,5 @@
-/* Sudoku PWA - simple offline cache */
-const CACHE = "sudoku-pwa-v1";
+/* Sudoku PWA - offline cache + update flow */
+const CACHE = "sudoku-pwa-1.0.1";
 const ASSETS = ["./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png"];
 
 self.addEventListener("install", (e) => {
@@ -16,6 +16,10 @@ self.addEventListener("activate", (e) => {
     await Promise.all(keys.map(k => k !== CACHE ? caches.delete(k) : null));
     self.clients.claim();
   })());
+});
+
+self.addEventListener("message", (e) => {
+  if (e.data && e.data.type === "SKIP_WAITING") self.skipWaiting();
 });
 
 self.addEventListener("fetch", (e) => {
