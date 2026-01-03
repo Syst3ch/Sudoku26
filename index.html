@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
 <title>Sudoku</title>
 
 <!-- PWA -->
@@ -231,6 +231,20 @@ body{ min-height: 100svh; padding: calc(env(safe-area-inset-top) + 14px) 12px ca
 
 /* ===== Footer update button ===== */
 #btnUpdateCheck{ width:min(520px,92vw); justify-content:center; }
+
+
+/* ===== App-like behavior (reduce browser zoom/selection) ===== */
+html, body{ -webkit-text-size-adjust: 100%; }
+body{
+  -webkit-user-select:none;
+  user-select:none;
+  touch-action: manipulation;
+}
+input{
+  -webkit-user-select:text;
+  user-select:text;
+}
+
 </style>
 </head>
 
@@ -710,7 +724,7 @@ body{ min-height: 100svh; padding: calc(env(safe-area-inset-top) + 14px) 12px ca
       var html='';
       for(var i=0;i<s.length;i++){
         var rk=i+1, medal = rk===1?'gold':rk===2?'silver':rk===3?'bronze':'';
-        html += \'<tr><td><span class="medal"><span class="m" data-m="\'+medal+\'"></span>\'+rk+\'</span></td><td><strong>\'+esc(s[i].name)+\'</strong></td><td>\'+fmt(s[i].time)+\'</td></tr>\';
+        html += '<tr><td><span class="medal"><span class="m" data-m="'+medal+'"></span>'+rk+'</span></td><td><strong>'+esc(s[i].name)+'</strong></td><td>'+fmt(s[i].time)+'</td></tr>';
       }
       tbody.innerHTML=html;
     }
@@ -796,6 +810,19 @@ body{ min-height: 100svh; padding: calc(env(safe-area-inset-top) + 14px) 12px ca
       }).catch(function(){});
     });
   }
+
+  // ===== Prevent iOS pinch/double-tap zoom (best effort) =====
+  document.addEventListener('gesturestart', function(e){ e.preventDefault(); }, { passive:false });
+  document.addEventListener('gesturechange', function(e){ e.preventDefault(); }, { passive:false });
+  document.addEventListener('gestureend', function(e){ e.preventDefault(); }, { passive:false });
+
+  var _lte = 0;
+  document.addEventListener('touchend', function(e){
+    var now = Date.now();
+    if(now - _lte <= 300) e.preventDefault(); // block double-tap zoom
+    _lte = now;
+  }, { passive:false });
+
 })();
 </script>
 </body>
