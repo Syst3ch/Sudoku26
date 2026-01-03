@@ -1,6 +1,6 @@
 /* Sudoku PWA - offline cache + update flow */
-const CACHE = "sudoku-pwa-2.0v";
-const ASSETS = ["./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png"];
+const CACHE = "sudoku-pwa-2.0v.1";
+const ASSETS = ["./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./version.json"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil((async () => {

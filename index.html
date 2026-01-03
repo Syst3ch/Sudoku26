@@ -349,7 +349,7 @@ html, body{
   <div class="row" style="justify-content:center;margin-top:6px">
     <button class="btn ghost" id="btnUpdateCheck" aria-label="בדוק עדכון">
       <svg class="ic" viewBox="0 0 24 24"><use href="#i-refresh"></use></svg>
-      <span id="verLabel">בדוק אם יש גרסה חדשה (v2.0v)</span>
+      <span id="verLabel">בדוק אם יש גרסה חדשה (v2.0v.1)</span>
     </button>
   </div>
 
@@ -400,7 +400,7 @@ html, body{
 
 <script>
 (function(){
-  var APP_VERSION = '2.0v';
+  var APP_VERSION = '2.0v.1';
   /* ===== Elements ===== */
   var g = document.getElementById('g');
   var stat = document.getElementById('stat');
@@ -472,7 +472,7 @@ html, body{
   var sel=0;
 
   function rint(n){ return (Math.random()*n)|0; }
-  function sh(a){ for(v2.0v){ var j=rint(i+1), t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+  function sh(a){ for(var i=0;i<s.length;i++){ var j=rint(i+1), t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
   function pat(r,c){ return (B*(r%B)+((r/B)|0)+c)%N; }
 
   function makeFull(){
@@ -480,17 +480,17 @@ html, body{
     var rb=sh(base.slice()), cb=sh(base.slice());
     var r=[], c=[], nums=sh([1,2,3,4,5,6,7,8,9]);
 
-    for(v2.0v){
+    for(var i=0;i<s.length;i++){
       var g1=rb[gi], inner=sh([0,1,2]);
       for(v2.0v) r.push(g1*3+inner[k]);
     }
-    for(v2.0v){
+    for(var i=0;i<s.length;i++){
       var g2=cb[gj], inner2=sh([0,1,2]);
       for(v2.0v) c.push(g2*3+inner2[kk]);
     }
 
     var out=[];
-    for(v2.0v){
+    for(var i=0;i<s.length;i++){
       var row=[];
       for(v2.0v) row.push(nums[pat(r[i],c[j])]);
       out.push(row);
@@ -514,21 +514,21 @@ html, body{
 
   function lockBoard(){
     var cs=cells();
-    for(v2.0v){
+    for(var i=0;i<s.length;i++){
       var x=cs[i];
       if(!x.readOnly){ x.disabled=true; x.style.opacity=.6; }
     }
   }
   function unlockBoard(){
     var cs=cells();
-    for(v2.0v){
+    for(var i=0;i<s.length;i++){
       cs[i].disabled=false; cs[i].style.opacity=1;
     }
   }
 
   function readGrid(){
     var cs=cells(), a=[[],[],[],[],[],[],[],[],[]];
-    for(v2.0v){
+    for(var i=0;i<s.length;i++){
       var rr=(i/9)|0, cc=i%9;
       a[rr][cc] = +(cs[i].value||0);
     }
@@ -563,7 +563,7 @@ html, body{
 
   function render(){
     g.innerHTML='';
-    for(v2.0v)for(v2.0v){
+    for(v2.0v)for(var i=0;i<s.length;i++){
       var x=document.createElement('input');
       x.className='cell';
       x.inputMode='numeric';
@@ -645,7 +645,7 @@ html, body{
     startTimer();
     toast('בהצלחה!','info');
     var cs=cells();
-    for(v2.0v){ if(!cs[i].readOnly){ cs[i].focus(); break; } }
+    for(var i=0;i<s.length;i++){ if(!cs[i].readOnly){ cs[i].focus(); break; } }
   };
 
   function mustStart(){
@@ -658,7 +658,7 @@ html, body{
   function check(){
     if(mustStart()) return false;
     var a=readGrid(), filledAll=true, ok=true;
-    for(v2.0v)for(v2.0v){
+    for(v2.0v)for(var i=0;i<s.length;i++){
       if(!a[r][c]) filledAll=false;
       if(a[r][c] && a[r][c]!==sol[r][c]) ok=false;
     }
@@ -671,7 +671,7 @@ html, body{
     var a=readGrid();
     for(v2.0v)for(v2.0v) if(!a[r][c]) return;
     var ok=true;
-    for(v2.0v)for(v2.0v){
+    for(v2.0v)for(var i=0;i<s.length;i++){
       if(a[rr][cc]!==sol[rr][cc]){ ok=false; break; }
     }
     if(ok){
@@ -690,7 +690,7 @@ html, body{
 
     if(cs[i].readOnly || a[r][c]){
       var empties=[];
-      for(v2.0v){
+      for(var i=0;i<s.length;i++){
         var rr=(k/9)|0, cc=k%9;
         if(!a[rr][cc] && !cs[k].readOnly) empties.push(k);
       }
@@ -746,7 +746,7 @@ html, body{
         return;
       }
       var html='';
-      for(v2.0v){
+      for(var i=0;i<s.length;i++){
         var rk=i+1, medal = rk===1?'gold':rk===2?'silver':rk===3?'bronze':'';
         html += '<tr><td><span class="medal"><span class="m" data-m="'+medal+'"></span>'+rk+'</span></td><td><strong>'+esc(s[i].name)+'</strong></td><td>'+fmt(s[i].time)+'</td></tr>';
       }
@@ -794,13 +794,40 @@ html, body{
         var later = document.getElementById("updLater");
         var now = document.getElementById("updNow");
         var btnUC = document.getElementById("btnUpdateCheck");
+
+        function compareVersion(a,b){
+          function nums(x){
+            return String(x||"").toLowerCase().replace(/[^0-9]+/g,'.').split('.').filter(Boolean).map(n=>parseInt(n,10));
+          }
+          var A=nums(a), B=nums(b), L=Math.max(A.length,B.length);
+          for(var i=0;i<L;i++){
+            var av=A[i]||0, bv=B[i]||0;
+            if(av>bv) return 1;
+            if(av<bv) return -1;
+          }
+          return 0;
+        }
+        function checkRemoteVersion(){
+          return fetch("./version.json?ts="+Date.now(), {cache:"no-store"})
+            .then(r=>r.ok?r.json():Promise.reject())
+            .then(j=>String((j&&j.version)||"").trim())
+            .catch(()=>null);
+        }
+
         if(btnUC) btnUC.onclick = function(){
           hide();
-          reg.update().then(function(){
-            if(reg.waiting && navigator.serviceWorker.controller){
-              promptForUpdate();
+          Promise.all([checkRemoteVersion(), reg.update()]).then(function(res){
+            var remote = res[0];
+            if(remote && compareVersion(remote, APP_VERSION) > 0){
+              // try to get SW to fetch new assets
+              setTimeout(function(){
+                if(reg.waiting && navigator.serviceWorker.controller) promptForUpdate();
+                else toast("נמצא עדכון ("+remote+"). אם לא הופיעה הודעה—סגור/פתח את האפליקציה.","info");
+              }, 400);
             }else{
-              toast("אין עדכון חדש כרגע.","info");
+              // even if remote not newer, we might still have waiting SW
+              if(reg.waiting && navigator.serviceWorker.controller) promptForUpdate();
+              else toast("אין עדכון חדש כרגע.","info");
             }
           }).catch(function(){ toast("לא הצלחתי לבדוק עדכונים.","bad"); });
         };
