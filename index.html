@@ -270,20 +270,16 @@ td strong{color:var(--txt)}
 
 
 
-/* ===== FIX: keep Sudoku grid perfectly centered and aligned ===== */
-#g{
-  justify-self: center;
-  align-self: center;
-  width: min(92vw, 520px) !important;  /* do NOT stretch to full card width */
-  max-width: 520px !important;
-  grid-template-rows: repeat(9, 1fr);
-}
+/* ===== iOS: make inputs truly box-like ===== */
 .cell{
-  margin: 0 !important;
-  padding: 0 !important;
-  height: 100%;
-  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 0;
+  line-height: 1;
+  min-width: 0;
+  min-height: 0;
 }
+#g{ margin-inline:auto; }
 
 </style>
 </head>
@@ -360,7 +356,7 @@ td strong{color:var(--txt)}
   <div class="row" style="justify-content:center;margin-top:6px">
     <button class="btn ghost" id="btnUpdateCheck" aria-label="בדוק עדכון">
       <svg class="ic" viewBox="0 0 24 24"><use href="#i-refresh"></use></svg>
-      <span id="verLabel">בדוק אם יש גרסה חדשה (v2.1.7)</span>
+      <span id="verLabel">בדוק אם יש גרסה חדשה (v2.1.8)</span>
     </button>
   </div>
 </div>
@@ -408,7 +404,7 @@ td strong{color:var(--txt)}
 
 <script>
 (function(){
-  var APP_VERSION = "2.1.7";
+  var APP_VERSION = "2.1.8";
 
   // Prevent iOS pinch/double-tap zoom (best effort)
   document.addEventListener('gesturestart', function(e){ e.preventDefault(); }, { passive:false });
@@ -423,6 +419,21 @@ td strong{color:var(--txt)}
 
   /* Elements */
   var g = document.getElementById('g');
+
+  // ===== Pixel-perfect grid sizing on iPhone (avoid fractional columns drifting) =====
+  function fitGrid(){
+    try{
+      var vw = Math.min(window.innerWidth || 0, document.documentElement.clientWidth || 0) || 0;
+      if(!vw || !g) return;
+      var target = Math.min(Math.floor(vw * 0.92), 520);
+      // make size multiple of 9 so each cell is integer px
+      var size = Math.max(270, Math.floor(target / 9) * 9);
+      g.style.width = size + "px";
+      g.style.height = size + "px";
+      g.style.marginInline = "auto";
+    }catch(e){}
+  }
+
   var stat = document.getElementById('stat');
   var filled = document.getElementById('filled');
   var timerEl = document.getElementById('timer');
@@ -447,7 +458,7 @@ td strong{color:var(--txt)}
   var startBtn= document.getElementById('startBtn');
   var btnUpdateCheck = document.getElementById('btnUpdateCheck');
   var verLabel = document.getElementById('verLabel');
-  if(verLabel) verLabel.textContent = "בדוק אם יש גרסה חדשה (v2.1.7)";
+  if(verLabel) verLabel.textContent = "בדוק אם יש גרסה חדשה (v2.1.8)";
 
   /* Toast */
   var t = document.getElementById('t'), tm = document.getElementById('tm'), td = document.getElementById('td');
@@ -552,6 +563,7 @@ td strong{color:var(--txt)}
       g.appendChild(x);
     }
     updateFilled();
+    fitGrid();
     if(started) unlockBoard(); else lockBoard();
     sel=0;
   }
@@ -680,6 +692,9 @@ td strong{color:var(--txt)}
   renderScores();
   pickLevel('easy');
   openModal();
+  fitGrid();
+  window.addEventListener('resize', function(){ setTimeout(fitGrid, 50); });
+  window.addEventListener('orientationchange', function(){ setTimeout(fitGrid, 200); });
 
   /* Update prompt + manual check */
   var upd = document.getElementById("upd");
