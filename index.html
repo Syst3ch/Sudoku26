@@ -232,6 +232,19 @@ td strong{color:var(--txt)}
   }
 }
 
+
+
+/* ===== Fix: center Sudoku grid inside its card (iPhone) ===== */
+#g{
+  margin-inline: auto;
+}
+@media (max-width: 979px){
+  #g{
+    width: 100% !important;
+    max-width: 520px;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -307,7 +320,7 @@ td strong{color:var(--txt)}
   <div class="row" style="justify-content:center;margin-top:6px">
     <button class="btn ghost" id="btnUpdateCheck" aria-label="בדוק עדכון">
       <svg class="ic" viewBox="0 0 24 24"><use href="#i-refresh"></use></svg>
-      <span id="verLabel">בדוק אם יש גרסה חדשה (v2.1.3)</span>
+      <span id="verLabel">בדוק אם יש גרסה חדשה (v2.1.4)</span>
     </button>
   </div>
 </div>
@@ -355,7 +368,7 @@ td strong{color:var(--txt)}
 
 <script>
 (function(){
-  var APP_VERSION = "2.1.3";
+  var APP_VERSION = "2.1.4";
 
   // Prevent iOS pinch/double-tap zoom (best effort)
   document.addEventListener('gesturestart', function(e){ e.preventDefault(); }, { passive:false });
@@ -394,7 +407,7 @@ td strong{color:var(--txt)}
   var startBtn= document.getElementById('startBtn');
   var btnUpdateCheck = document.getElementById('btnUpdateCheck');
   var verLabel = document.getElementById('verLabel');
-  if(verLabel) verLabel.textContent = "בדוק אם יש גרסה חדשה (v2.1.3)";
+  if(verLabel) verLabel.textContent = "בדוק אם יש גרסה חדשה (v2.1.4)";
 
   /* Toast */
   var t = document.getElementById('t'), tm = document.getElementById('tm'), td = document.getElementById('td');
