@@ -1,5 +1,5 @@
 /* Sudoku PWA - offline cache + update */
-const CACHE = "sudoku-pwa-2.1.8";
+const CACHE = "sudoku-pwa-2.1.9";
 const ASSETS = ["./","./index.html","./manifest.webmanifest","./version.json","./icon-192.png","./icon-512.png"];
 
 self.addEventListener("install",(e)=>{

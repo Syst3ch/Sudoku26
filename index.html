@@ -281,6 +281,26 @@ td strong{color:var(--txt)}
 }
 #g{ margin-inline:auto; }
 
+
+
+/* ===== FINAL centering: force #g to dead-center in RTL/LTR on iOS ===== */
+.gridWrap{
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+#g{
+  /* the combination below defeats iOS RTL layout drift */
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0 !important;
+}
+/* prevent any parent text alignment from affecting inline centering */
+.gridWrap, .card, .wrap { text-align: initial; }
+
 </style>
 </head>
 <body>
@@ -356,7 +376,7 @@ td strong{color:var(--txt)}
   <div class="row" style="justify-content:center;margin-top:6px">
     <button class="btn ghost" id="btnUpdateCheck" aria-label="בדוק עדכון">
       <svg class="ic" viewBox="0 0 24 24"><use href="#i-refresh"></use></svg>
-      <span id="verLabel">בדוק אם יש גרסה חדשה (v2.1.8)</span>
+      <span id="verLabel">בדוק אם יש גרסה חדשה (v2.1.9)</span>
     </button>
   </div>
 </div>
@@ -404,7 +424,7 @@ td strong{color:var(--txt)}
 
 <script>
 (function(){
-  var APP_VERSION = "2.1.8";
+  var APP_VERSION = "2.1.9";
 
   // Prevent iOS pinch/double-tap zoom (best effort)
   document.addEventListener('gesturestart', function(e){ e.preventDefault(); }, { passive:false });
@@ -430,7 +450,7 @@ td strong{color:var(--txt)}
       var size = Math.max(270, Math.floor(target / 9) * 9);
       g.style.width = size + "px";
       g.style.height = size + "px";
-      g.style.marginInline = "auto";
+      g.style.marginInline = "";
     }catch(e){}
   }
 
@@ -458,7 +478,7 @@ td strong{color:var(--txt)}
   var startBtn= document.getElementById('startBtn');
   var btnUpdateCheck = document.getElementById('btnUpdateCheck');
   var verLabel = document.getElementById('verLabel');
-  if(verLabel) verLabel.textContent = "בדוק אם יש גרסה חדשה (v2.1.8)";
+  if(verLabel) verLabel.textContent = "בדוק אם יש גרסה חדשה (v2.1.9)";
 
   /* Toast */
   var t = document.getElementById('t'), tm = document.getElementById('tm'), td = document.getElementById('td');
