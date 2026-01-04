@@ -180,6 +180,32 @@ td strong{color:var(--txt)}
 }
 
 #btnUpdateCheck{width:min(520px,92vw);max-width:100%;justify-content:center}
+
+
+/* ===== iOS fix: grid lines via background (no rounding issues) ===== */
+#g{
+  position: relative;
+  background-image:
+    repeating-linear-gradient(to right, rgba(255,255,255,.10) 0 1px, transparent 1px calc(100%/9)),
+    repeating-linear-gradient(to bottom, rgba(255,255,255,.10) 0 1px, transparent 1px calc(100%/9)),
+    repeating-linear-gradient(to right, rgba(255,255,255,.25) 0 2px, transparent 2px calc(100%/3)),
+    repeating-linear-gradient(to bottom, rgba(255,255,255,.25) 0 2px, transparent 2px calc(100%/3));
+  background-size: 100% 100%;
+  background-origin: border-box;
+}
+:root[data-theme="light"] #g{
+  background-image:
+    repeating-linear-gradient(to right, rgba(10,20,40,.12) 0 1px, transparent 1px calc(100%/9)),
+    repeating-linear-gradient(to bottom, rgba(10,20,40,.12) 0 1px, transparent 1px calc(100%/9)),
+    repeating-linear-gradient(to right, rgba(10,20,40,.24) 0 2px, transparent 2px calc(100%/3)),
+    repeating-linear-gradient(to bottom, rgba(10,20,40,.24) 0 2px, transparent 2px calc(100%/3));
+}
+.cell{
+  border: none !important;
+  background: transparent;
+}
+.bR,.bB{ border: none !important; }
+
 </style>
 </head>
 <body>
@@ -255,7 +281,7 @@ td strong{color:var(--txt)}
   <div class="row" style="justify-content:center;margin-top:6px">
     <button class="btn ghost" id="btnUpdateCheck" aria-label="בדוק עדכון">
       <svg class="ic" viewBox="0 0 24 24"><use href="#i-refresh"></use></svg>
-      <span id="verLabel">בדוק אם יש גרסה חדשה (v2.1)</span>
+      <span id="verLabel">בדוק אם יש גרסה חדשה (v2.1.1)</span>
     </button>
   </div>
 </div>
@@ -303,7 +329,7 @@ td strong{color:var(--txt)}
 
 <script>
 (function(){
-  var APP_VERSION = "2.1";
+  var APP_VERSION = "2.1.1";
 
   // Prevent iOS pinch/double-tap zoom (best effort)
   document.addEventListener('gesturestart', function(e){ e.preventDefault(); }, { passive:false });
@@ -342,7 +368,7 @@ td strong{color:var(--txt)}
   var startBtn= document.getElementById('startBtn');
   var btnUpdateCheck = document.getElementById('btnUpdateCheck');
   var verLabel = document.getElementById('verLabel');
-  if(verLabel) verLabel.textContent = "בדוק אם יש גרסה חדשה (v2.1)";
+  if(verLabel) verLabel.textContent = "בדוק אם יש גרסה חדשה (v2.1.1)";
 
   /* Toast */
   var t = document.getElementById('t'), tm = document.getElementById('tm'), td = document.getElementById('td');
