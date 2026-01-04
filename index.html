@@ -206,6 +206,17 @@ td strong{color:var(--txt)}
 }
 .bR,.bB{ border: none !important; }
 
+
+
+/* ===== iPhone: center leaderboard tables ===== */
+.split{ justify-items:center; }
+.table{
+  margin-inline:auto;
+  width:min(92vw,520px);
+}
+.tableTop{ width:100%; }
+.table table{ width:100%; margin-inline:auto; }
+
 </style>
 </head>
 <body>
@@ -281,7 +292,7 @@ td strong{color:var(--txt)}
   <div class="row" style="justify-content:center;margin-top:6px">
     <button class="btn ghost" id="btnUpdateCheck" aria-label="בדוק עדכון">
       <svg class="ic" viewBox="0 0 24 24"><use href="#i-refresh"></use></svg>
-      <span id="verLabel">בדוק אם יש גרסה חדשה (v2.1.1)</span>
+      <span id="verLabel">בדוק אם יש גרסה חדשה (v2.1.2)</span>
     </button>
   </div>
 </div>
@@ -329,7 +340,7 @@ td strong{color:var(--txt)}
 
 <script>
 (function(){
-  var APP_VERSION = "2.1.1";
+  var APP_VERSION = "2.1.2";
 
   // Prevent iOS pinch/double-tap zoom (best effort)
   document.addEventListener('gesturestart', function(e){ e.preventDefault(); }, { passive:false });
@@ -368,7 +379,7 @@ td strong{color:var(--txt)}
   var startBtn= document.getElementById('startBtn');
   var btnUpdateCheck = document.getElementById('btnUpdateCheck');
   var verLabel = document.getElementById('verLabel');
-  if(verLabel) verLabel.textContent = "בדוק אם יש גרסה חדשה (v2.1.1)";
+  if(verLabel) verLabel.textContent = "בדוק אם יש גרסה חדשה (v2.1.2)";
 
   /* Toast */
   var t = document.getElementById('t'), tm = document.getElementById('tm'), td = document.getElementById('td');
