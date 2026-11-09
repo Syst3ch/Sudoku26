@@ -5,7 +5,7 @@
 #   scripts/download.sh <url> --subs     וידאו + כתוביות קיימות (עברית/אנגלית)
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-[ -f "$ROOT/.venv/bin/activate" ] && . "$ROOT/.venv/bin/activate"
+for a in "$ROOT/.venv/bin/activate" "$ROOT/.venv/Scripts/activate"; do [ -f "$a" ] && . "$a" && break; done
 OUT="$ROOT/media/downloads/%(title).80s [%(id)s].%(ext)s"
 
 url="${1:?שימוש: download.sh <url> [--audio|--subs]}"

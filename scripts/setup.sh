@@ -18,9 +18,11 @@ command -v node >/dev/null || { echo "צריך Node.js 22 ומעלה: https://no
 npm install
 
 echo "== Python: Whisper (faster-whisper) + ivrit.ai + yt-dlp =="
-PY="${PYTHON:-python3}"
+# ב-Windows הפקודה היא python וה-venv נמצא ב-.venv/Scripts
+PY="${PYTHON:-$(command -v python3 >/dev/null && python3 -c '' 2>/dev/null && echo python3 || echo python)}"
 [ -d .venv ] || "$PY" -m venv .venv
-. .venv/bin/activate
+if [ -f .venv/Scripts/activate ]; then ACT=.venv/Scripts/activate; else ACT=.venv/bin/activate; fi
+. "$ACT"
 pip install -q -U pip
 pip install -q -r requirements.txt
 yt-dlp --version
@@ -29,5 +31,5 @@ echo "== מיומנויות (skills) של HyperFrames ל-Claude Code =="
 npx --yes hyperframes skills >/dev/null 2>&1 && echo "הותקנו ב-~/.claude/skills" || echo "דילוג (אין רשת?)"
 
 echo
-echo "מוכן. הפעל את הסביבה עם:  source .venv/bin/activate"
+echo "מוכן. הפעל את הסביבה עם:  source $ACT"
 echo "המודל של ivrit.ai (~1.6GB) יורד אוטומטית בתמלול העברי הראשון."
