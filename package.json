@@ -1,0 +1,33 @@
+{
+  "name": "video-editor",
+  "version": "1.0.0",
+  "description": "עורך וידאו: Remotion, HyperFrames, FFmpeg, Whisper/ivrit.ai, yt-dlp",
+  "scripts": {
+    "studio": "remotion studio",
+    "render": "remotion render",
+    "render:title": "remotion render TitleCard media/output/title.mp4",
+    "hf:preview": "cd hyperframes && hyperframes preview",
+    "hf:check": "cd hyperframes && hyperframes check",
+    "hf:render": "cd hyperframes && hyperframes render -o ../media/output/hyperframes.mp4",
+    "typecheck": "tsc --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Syst3ch/VideoEditor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Syst3ch/VideoEditor/issues"
+  },
+  "homepage": "https://github.com/Syst3ch/VideoEditor#readme",
+  "dependencies": {
+    "@remotion/cli": "^4.0.542",
+    "@types/react": "^19.3.0",
+    "hyperframes": "^0.9.26",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "remotion": "^4.0.542",
+    "typescript": "^5.9.3",
+    "zod": "^3.25.76"
+  },
+  "private": true
+}
