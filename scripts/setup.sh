@@ -23,8 +23,8 @@ PY="${PYTHON:-$(command -v python3 >/dev/null && python3 -c '' 2>/dev/null && ec
 [ -d .venv ] || "$PY" -m venv .venv
 if [ -f .venv/Scripts/activate ]; then ACT=.venv/Scripts/activate; else ACT=.venv/bin/activate; fi
 . "$ACT"
-pip install -q -U pip
-pip install -q -r requirements.txt
+python -m pip install -q -U pip
+python -m pip install -q -r requirements.txt
 yt-dlp --version
 
 echo "== מיומנויות (skills) של HyperFrames ל-Claude Code =="
