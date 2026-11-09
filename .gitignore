@@ -1,0 +1,14 @@
+node_modules/
+.venv/
+__pycache__/
+.DS_Store
+
+# קבצי מדיה לא נכנסים ל-git (כבדים מדי) — רק מבנה התיקיות
+media/**/*
+!media/**/
+!media/**/.gitkeep
+
+# קבצים זמניים של HyperFrames / Remotion
+hyperframes/renders/
+hyperframes/.hyperframes/
+out/
